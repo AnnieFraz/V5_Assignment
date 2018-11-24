@@ -1,0 +1,7 @@
+Record from ring node on Host: localhost, ID: one, at what time: Sat Nov 24 18:22:43 GMT 2018, Token: Token - ringManager, Counter: 0
+Record from ring node on Host: localhost, ID: three, at what time: Sat Nov 24 18:22:43 GMT 2018, Token: Token - ringManager, Counter: 2
+Record from ring node on Host: localhost, ID: one, at what time: Sat Nov 24 18:22:44 GMT 2018, Token: Token - ringManager, Counter: 3
+Record from ring node on Host: localhost, ID: three, at what time: Sat Nov 24 18:22:45 GMT 2018, Token: Token - ringManager, Counter: 5
+Record from ring node on Host: localhost, ID: one, at what time: Sat Nov 24 18:22:46 GMT 2018, Token: Token - ringManager, Counter: 6
+Record from ring node on Host: localhost, ID: three, at what time: Sat Nov 24 18:22:47 GMT 2018, Token: Token - ringManager, Counter: 8
+Record from ring node on Host: localhost, ID: one, at what time: Sat Nov 24 18:22:48 GMT 2018, Token: Token - ringManager, Counter: 9
