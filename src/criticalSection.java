@@ -14,8 +14,6 @@ public class criticalSection extends Thread {
     private String nextHost;
     private Token token; // This is what is passed in the Ring
     private String fileName; // The file we write to.
-    
-    private int totalMembers;
 
     /**
      * Critical Section Constructor
@@ -47,70 +45,32 @@ public class criticalSection extends Thread {
         	}
             
         }//End of Skip if statement
-        propagate(); // This is if I don't skip
-       // die(); //This is to kill the processes.
-        
-        /*
-        if (token.keepAlive()){
-        	if (token.getCurrentNoOfCirculates() < totalMembers ){
-        		ringMember ringMember;
-				try {
-					ringMember = (ringMember) Naming.lookup("rmi://" + nextHost + "/" + nextId);
-					ringMember.takeToken(token, fileName);
-					//System.exit(0);
-				} catch (MalformedURLException | RemoteException | NotBoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-        		System.exit(0);
-        	}
-        	*/
-        //}
-
+        propagate(); //This is the method which sends on tokens. 
     } // End of Run Method
-
+    
+    //CleanUp (Advanced Feature 6) - Ends each node when reached maximum one by one. 
     private void die() {
-        //Clean Up (Advanced Feature 6)
-        //It checks whether to token is a destroy token.
-        //This 'kills'/ ends the current member
-    	System.out.println("I is here");
-    	
-    	token = token.cleanUp();
+    	token = token.cleanUp(); //This is creating the destroy token
         if (!token.keepAlive()) {
-        	//System.exit(0);
-        	System.out.println("I is here2");
-        	//totalMembers = Naming.list("rmi://"+thisHost+"/").length;
-        	//if ( totalMembers > 1 ){
-        		System.out.println(totalMembers);
 			try {
 				if(Naming.list("rmi://"+thisHost+"/").length > 1)
 				{
-					System.out.println("I am here 3");
+					System.out.println("Ring member "+ thisId + " bites the dust");
 					ringMember ringMember = (ringMember) Naming.lookup("rmi://" + nextHost + "/" + nextId);
-					System.out.println(token.getTokenName());
-					ringMember.takeToken(token, fileName);
-					System.exit(0);
-				} else if (Naming.list("rmi://"+thisHost+"/").length < 1){
-					System.out.println("Hi");
-					//System.exit(0);
-				}
-				//}else{
-					//System.exit(0);
-				//}
-				//System.exit(0);
-				
+					ringMember.takeToken(token, fileName); //Passes the destroy token onto the next member
+					System.exit(0); //Ends the current member
+				} 
 			} catch (MalformedURLException | RemoteException | NotBoundException e) {
-				// TODO Auto-generated catch block
 				System.exit(0);
 				e.printStackTrace();
 			}
-        	//}else{
-			
-			//System.exit(0);
-        	//}
         }
     }
 
+    /**
+     * Method where the main process happens, this is where it is written to a file and extra time allowed for certain nodes. 
+     * @return void
+     */
     private void process() {
         try {
             System.out.println("Writing to file: " + fileName);
@@ -144,21 +104,21 @@ public class criticalSection extends Thread {
         }//End of try/catch
     }
 
+    /**
+     * This sets up the host and passes tokens along 
+     * @return void
+     */
     private void propagate() {
         //This Increments a token, Passes to next Node,
         // Gets a token. Increments token count. Passes token to the next node.
 
         try {
-            ringMember ringMember;
-            
-           // totalMembers = Naming.list("rmi://"+thisHost+"/").length;
-
-            //Increments the token counter (Advanced Feature 1)
-            
             //This checks whether the token has ran over its certain number of circles (Advanced Feature 3)
             if (token.getCounter() < token.getMaxNoOfCirculates()) {
             	System.out.println("Look up RMIregistry with: rmi://" + nextHost + "/" + nextId);
-                ringMember = (ringMember) Naming.lookup("rmi://" + nextHost + "/" + nextId);
+            	//Sets up a ring member
+            	ringMember ringMember = (ringMember) Naming.lookup("rmi://" + nextHost + "/" + nextId);
+                //Increments the token counter (Advanced Feature 1)
             	System.out.println("Received token count value is: " + token.increamentCounter());
                 System.out.println("Token received: entering critical region");
                 System.out.println("Token id is: " + token.getTokenName());
@@ -169,12 +129,8 @@ public class criticalSection extends Thread {
                 System.out.println("");
             } else {
                 System.err.println("It has reached the maximum number of circulates which is :" + token.getMaxNoOfCirculates());
-                //token = token.cleanUp(); //It creates a destroy token that it then sends to members
-                die();
-                //System.exit(0);
+                die(); //When maximum is met, what kills it
             }
-            
-
         } catch (Exception e) {
             System.err.println("RMIregistry lookup failed: " + e);
         } // End of try/catch

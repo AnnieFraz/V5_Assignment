@@ -12,12 +12,13 @@ public class Token implements java.io.Serializable {
   
 
     /**
-     * Constructor: Token - has everything in it
+     * Constructor: Token - This has all the parameters in it
      *
      * @param tokenName
      * @param counter
      * @param maxNoOfCirculate
      * @param startNodeID
+     * @param currentNoOfCirculates
      * @param extraTimeNode
      * @param skipNode
      */
@@ -32,12 +33,30 @@ public class Token implements java.io.Serializable {
         this.keepAlive = keepAlive;
     }//End of Constructor
 
+    /**
+     * Constructor: This is so currentNoOfCirculates is a default 0. This is the token that keeps it alive
+     *
+     * @param tokenName
+     * @param counter
+     * @param maxNoOfCirculate
+     * @param startNodeID
+     * @param extraTimeNode
+     * @param skipNode
+     */
     public Token(String tokenName, int counter, int maxNoOfCirculate, String startNodeID, String extraTimeNode, String skipNode) {
         this(tokenName, counter, maxNoOfCirculate, startNodeID, 0, extraTimeNode, skipNode, true);
-        //this Token is keeping things alive
-
     }
-
+    
+    /**
+     * Constructor: This is a constructor for the kill token. 
+     *
+     * @param tokenName
+     * @param counter
+     * @param maxNoOfCirculate
+     * @param startNodeID
+     * @param extraTimeNode
+     * @param skipNode
+     */
     public Token(Token token, String tokenName, boolean keepAlive){
         //This token kills things
         this(tokenName, token.counter, token.maxNoOfCirculate, token.currentNodeId, token.currentNoOfCirculates, token.moreTimeNodeId, token.skipTurnID, keepAlive);
@@ -52,10 +71,6 @@ public class Token implements java.io.Serializable {
     public boolean skip(String thisId) {
         return skipTurnID.equals(thisId) && currentNoOfCirculates % 2 == 0;
     }
-    
-   
-
-//Naming.list().length
 
     /**
      * This Increments the counter of the token
@@ -70,7 +85,6 @@ public class Token implements java.io.Serializable {
     /**
      * This creates a new token to safety stops each node from running
      */
-    //TODO: This
     public Token cleanUp() {
         Token endToken = new Token(this, "cleanup", false);
         return endToken; 
@@ -202,6 +216,11 @@ public class Token implements java.io.Serializable {
         this.moreTimeNodeId = moreTimeNodeId;
     }
 
+    /**
+     * GETTER for keep alive
+     *
+     * @return keepAlive
+     */
     public boolean keepAlive(){
         return keepAlive;
     }
